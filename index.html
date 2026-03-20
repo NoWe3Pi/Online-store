@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Brand for sale</title>
+  </head>
+  <body>
+    <div class="container">
+      <header class="main-header">
+        <div class="header-container">
+          <div class="logo">Sale Store</div>
+          <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Найти товары" />
+          </div>
+          <div class="cart-box">
+            <!-- Твоя корзинка с кружком -->
+            <div class="cart-wrapper">
+              <svg
+                color="var(--text-secondary-solid)"
+                class="ds-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+              >
+                <path
+                  fill="currentColor"
+                  d="m5.411 3.933 1.76 8.277a1 1 0 0 0 1.957-.416L7.47 4h6.455l1.063 5h2.045l-1.219-5.733c-.096-.452-.144-.677-.264-.846a1 1 0 0 0-.418-.339C14.943 2 14.713 2 14.25 2H6.976c-.676 0-1.015 0-1.25.14a1 1 0 0 0-.439.541c-.087.26-.017.59.124 1.252"
+                ></path>
+                <path
+                  fill="currentColor"
+                  d="M5.9 12.48 5.371 10H1l1.8 8.466c.193.903.29 1.355.53 1.693a2 2 0 0 0 .835.677c.38.164.842.164 1.766.164h11.75c.887 0 1.33 0 1.7-.154a2 2 0 0 0 .824-.639c.242-.32.353-.748.575-1.607L23 10H10.075l.324 1.523a2.3 2.3 0 0 1-4.5.957"
+                ></path>
+              </svg>
+
+              <!-- Тот самый красный кружок -->
+              <span id="cart-count">0</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <h1 style="text-align: center">Витрина товаров</h1>
+
+      <div id="product-container" class="product-list"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
