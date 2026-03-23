@@ -13,9 +13,14 @@
           <div class="logo">Sale Store</div>
           <div class="search-container">
             <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" placeholder="Найти товары" />
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="Найти товары"
+            />
           </div>
-          <div class="cart-box">
+          <div id="cart-box" class="cart-box">
             <!-- Твоя корзинка с кружком -->
             <div class="cart-wrapper">
               <svg
@@ -37,7 +42,7 @@
               </svg>
 
               <!-- Тот самый красный кружок -->
-              <span id="cart-count">0</span>
+              <span id="cart-count" class="cart-count">0</span>
             </div>
           </div>
         </div>
@@ -47,7 +52,6 @@
 
       <div id="product-container" class="product-list"></div>
     </div>
-
     <script src="script.js"></script>
   </body>
 </html>

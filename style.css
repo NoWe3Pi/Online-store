@@ -1,117 +1,150 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-body { 
-  font-family: sans-serif; 
-  background: #f4f4f4; 
+body {
+  font-family: sans-serif;
+  background: #f4f4f4;
   margin: 0; /* Убираем стандартные отступы браузера */
-  padding: 0; 
+  padding: 0;
 }
-.container {
-  max-width: 1000px; margin: 0 auto; 
-}
-.product-list {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 20px; /* Совпадает с padding хедера! */
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
-.card {
-    display: flex;          /* Включаем гибкий контейнер */
-    flex-direction: column; /* Элементы идут друг за другом сверху вниз */
-    align-items: center;    /* ВОТ ОНО! Выравнивает всё строго по центру по горизонтали */
-    text-align: center;     /* Центрирует текст внутри строк */
-    overflow-wrap: anywhere; /* Аварийный перенос длинных строк */
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background: #fff;
 
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
 }
-.card img {
-   width: 33.3%;    /* Или сколько ты хотел */
+.main-header {
+  background-color: #ff5722;
+  border-bottom: 1px solid #eee;
+  /* Уменьшаем ширину до 1000px */
+  max-width: 960px;
+  margin: 0 auto; /* Центрируем её */
+  /* ВАЖНО: Добавляем такие же отступы, как у .product-list */
+  padding: 7px 20px;
+  /* Скругляем углы, чтобы она не выглядела обрубленной */
+  border-radius: 12px;
+  position: sticky;
+  top: 10px; /* Немного отступим от верха, чтобы был виден серый фон */
+  z-index: 100;
+}
+.header-container {
+  max-width: 100%; /* Он просто занимает всё место внутри .main-header */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* Создаем поисковую строку  */
+.search-container {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #ffd11a; /* Тот самый желтый цвет */
+  border-radius: 12px; /* Скругленные углы */
+  padding: 8px 15px;
+  width: 100%;
+  max-width: 500px; /* Ограничим ширину поиска */
+}
+
+.search-input {
+  border: none; /* Убираем стандартную рамку инпута */
+  outline: none; /* Убираем синюю обводку при клике */
+  width: 100%;
+  font-size: 16px;
+  margin-left: 10px; /* Отступ от лупы */
+}
+
+.search-input::placeholder {
+  color: #999; /* Цвет текста подсказки */
+}
+
+/* Навигационная панель  */
+.cart-box {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Расстояние между иконкой и ценой */
 }
 
 /* Корзина и приклеенный счетчек к ней */
 .cart-wrapper {
-    position: relative; /* Это база: чтобы счетчик не улетел в угол экрана */
-    display: inline-block;
+  position: relative; /* Это база: чтобы счетчик не улетел в угол экрана */
+  display: inline-block;
 }
 
-#cart-count {
-    position: absolute; /* Позволяет двигать цифру относительно иконки */
-    top: -5px;          /* Двигаем вверх */
-    right: -5px;        /* Двигаем вправо */
-    background: red; /* Оранжево-красный цвет как на фото */
-    color: white;       /* Белый текст */
-    font-size: 12px;
-    font-weight: bold;
-    min-width: 18px;    /* Чтобы кружок был ровным */
-    height: 18px;
-    border-radius: 50%; /* Делает квадрат кругом */
-    display: flex;      /* Центрируем цифру внутри кружка */
-    align-items: center;
-    justify-content: center;
-}
-/* Навигационная панель  */
-.main-header {
-    background-color: #ff5722;
-    border-bottom: 1px solid #eee;
-    
-    /* Уменьшаем ширину до 1000px */
-    max-width: 960px; 
-    margin: 0 auto; /* Центрируем её */
-    
-    /* ВАЖНО: Добавляем такие же отступы, как у .product-list */
-    padding: 15px 20px; 
-    
-    /* Скругляем углы, чтобы она не выглядела обрубленной */
-    border-radius: 12px;
-    
-    position: sticky;
-    top: 10px; /* Немного отступим от верха, чтобы был виден серый фон */
-    z-index: 100;
+.cart-count {
+  position: absolute; /* Позволяет двигать цифру относительно иконки */
+  top: -5px; /* Двигаем вверх */
+  right: -5px; /* Двигаем вправо */
+  background: red; /* Оранжево-красный цвет как на фото */
+  color: white; /* Белый текст */
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 18px; /* Чтобы кружок был ровным */
+  height: 18px;
+  border-radius: 50%; /* Делает квадрат кругом */
+  display: flex; /* Центрируем цифру внутри кружка */
+  align-items: center;
+  justify-content: center;
 }
 
+/*Контент товаров*/
+.product-list {
+  /* 1. Позиционирование и размеры */
+  display: grid;
+  /* Заменяем repeat(3, 1fr) на умную колонку: 
+     она сама сделает 3 в ряд на десктопе и 1 в ряд на мобилке */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
 
-.header-container {
-    max-width: 100%; /* Он просто занимает всё место внутри .main-header */
-    margin: 0;
-    padding: 0; 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  /* 2. Геометрия контейнера */
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  gap: 20px;
 }
-
-.cart-box {
-    display: flex;
-    align-items: center;
-    gap: 15px; /* Расстояние между иконкой и ценой */
+.card {
+  display: flex; /* Включаем гибкий контейнер */
+  flex-direction: column; /* Элементы идут друг за другом сверху вниз */
+  align-items: center; /* ВОТ ОНО! Выравнивает всё строго по центру по горизонтали */
+  text-align: center; /* Центрирует текст внутри строк */
+  overflow-wrap: anywhere; /* Аварийный перенос длинных строк */
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  max-width: 350px; /* Карточка не станет шире этого значения */
+  width: 100%; /* Но сможет сужаться на совсем маленьких экранах */
+  margin: 0 auto;
 }
-
-/* Создаем поисковую строку  */
-.search-container {
-    display: flex;
-    align-items: center;
-    background: white;
-    border: 2px solid #FFD11A; /* Тот самый желтый цвет */
-    border-radius: 12px;       /* Скругленные углы */
-    padding: 8px 15px;
-    width: 100%;
-    max-width: 500px;          /* Ограничим ширину поиска */
+.card img {
+  width: 33.3%; /* Или сколько ты хотел */
 }
-
-#search-input {
-    border: none;              /* Убираем стандартную рамку инпута */
-    outline: none;             /* Убираем синюю обводку при клике */
-    width: 100%;
-    font-size: 16px;
-    margin-left: 10px;         /* Отступ от лупы */
+.card h3 {
+  margin-bottom: 15px;
+  /* Если хотите, чтобы заголовки были одной высоты: */
+  min-height: 50px;
 }
-
-#search-input::placeholder {
-    color: #999;               /* Цвет текста подсказки */
+.card .buy-btn {
+  margin-top: auto; /* Это "магия" flex: вытолкнет кнопку в самый низ карточки */
+}
+.buy-btn {
+  font-weight: bold; /* Сделаем текст четче */
+  outline: none; /* Убираем синюю рамку при клике */
+  background-color: rgb(255, 230, 0);
+  border: 2px solid #ffd11a; /* Тот самый желтый цвет */
+  border-radius: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+/* Эффект физического нажатия (кнопка слегка вдавливается) */
+.buy-btn:active {
+  transform: scale(0.9); /* Уменьшаем на 8% при клике */
+  transition: 0.1; /*Мгновенная реакция */
+}
+/* Класс "Успех", который мы будем давать кнопке в JS */
+button.buy-btn.added {
+  background-color: #4caf50 !important;
+  border-color: #45a049 !important;
+  color: white !important;
 }
