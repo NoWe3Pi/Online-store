@@ -174,3 +174,62 @@ button.buy-btn.added {
   padding: 20px 0;
   border-top: 2px solid #ff5722;
 }
+/* Создание в КОРЗИНЕ стрелку "Назад" */
+.back-btn {
+  position: absolute;
+  left: 1.6%;
+  top: 35%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 40px;
+  cursor: pointer;
+}
+.back-btn:hover {
+  color: red; /* Ссылка станет красной при наведении */
+}
+.hidden {
+  display: none !important;
+}
+
+.clear-btn {
+  position: absolute;
+  right: 3%;
+  top: 60%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.clear-btn img {
+  width: 30px; /* Подберите нужный размер (например, от 30px до 50px) */
+  height: auto; /* Высота подстроится автоматически, чтобы не искажать пропорции */
+}
+
+.no-products p {
+  color: black;
+}
+
+/* Оптимизация под разные разрешения  */
+@media (max-width: 669px) {
+  /* Исправляем кнопку удаления */
+  .ds-icon {
+    margin-left: 10px;
+  }
+  #clear-search-btn {
+    width: auto !important;
+    white-space: nowrap; /* Запрет Текста на ПЕРЕНОС */
+    padding: 10px 5px !important; /*Внутренние отступы (высота и ширина) */
+    font-size: 14px !important; /*Немного уменьшаем шрифт для мобильных версий */
+  }
+}
+
+#clear-search-btn {
+  align-items: center;
+  background: white;
+  border: 2px solid rgb(255, 82, 82); /* Тот самый желтый цвет */
+  border-radius: 12px; /* Скругленные углы */
+  padding: 8px 15px;
+  width: 18%;
+  cursor: pointer;
+}

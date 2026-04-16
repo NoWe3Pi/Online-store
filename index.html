@@ -42,13 +42,21 @@
               </svg>
 
               <!-- Тот самый красный кружок -->
-              <span id="cart-count" class="cart-count">0</span>
+              <span id="cart-count" class="cart-count"></span>
             </div>
           </div>
         </div>
       </header>
 
-      <h1 style="text-align: center">Витрина товаров</h1>
+      <h1 id="main-title" style="text-align: center; position: relative">
+        Витрина товаров
+        <div>
+          <button id="back-btn" class="back-btn hidden" alt="Strelka">←</button>
+          <button id="clear-cart-btn" class="clear-btn hidden" alt="Korzina">
+            <img src="Icons/free-icon-delete-6711573.png" alt="" />
+          </button>
+        </div>
+      </h1>
 
       <div id="product-container" class="product-list"></div>
     </div>
