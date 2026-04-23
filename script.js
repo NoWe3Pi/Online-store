@@ -1,25 +1,21 @@
-//**1 Ссылки на элементы*/
+//*************A.ССЫЛКИ НА ЭЛЕМЕНТЫ*************/
+// 1.Ссылка на главную отрисовку
 const productContainer = document.getElementById("product-container");
-//связываем переменную с счетчиком
+// 2.Ссылка на переменную с счетчиком
 let cartCount = document.getElementById("cart-count");
-//ссылка на связь в поле ввода input, для сброса не найденных товаров
+// 3.Ссылка на связь в поле ввода input, для сброса не найденных товаров
 const searchInput = document.getElementById("search-input");
-//привязка ссылки корзины
+// 4.Ссылка на очистку-корзины
 const shoppingСart = document.getElementById("cart-box");
-
-/*************** ПРИВЯЗКИ ЛОГИКИ*/
+// 5.Ссылка на корзину-удаления(img)
+const deleteCart = document.getElementById("clear-cart-btn");
+// 6.Ссылка на H1
 const mainTitle = document.getElementById("main-title");
+// 7.Ссылка на стрелку-назад
 const backBtn = document.getElementById("back-btn");
 
-//Удаление всех позиций в корзине
-const deleteCart = document.getElementById("clear-cart-btn");
-
-// Ниже функция превратит 14500 в "14 500" с красивым пробелом
-function formattedPrice(formatted) {
-  return formatted.toLocaleString("ru-RU");
-}
-
-//**2 Данные (Data)*/
+//*************B.ДАННЫЕ С ТОВАРАМИ(Data-данные)*************/
+//1.Товары и их описание, файлы, id
 const products = [
   { name: "Биокамин", img: "image/Fireplace.jpg", price: 1265, id: 1 },
   { name: "Дренажный насос", img: "image/optimize.jpg", price: 2500, id: 2 },
@@ -31,16 +27,56 @@ const products = [
   },
 ];
 
-//**3. Основная логика */
-function renderProducts(productsArray) {
-  // 1. Сначала полностью очищаем контейнер, чтобы товары не дублировались
-  productContainer.innerHTML = "";
+//2. Корзина(пустая или наполненная, взависимости от добавления)
+// Учить НИЖе
+// 1. Важно: В LocalStorage всё хранится только в виде текста (строки). Если там лежит твой массив, то для браузера это просто длинный набор символов: '[{"id":1,"name":"Apple"}]'.
 
-  //Логика если поисковая строка без совпадений с товарами
+// 2.JSON.parse — это «переводчик». Он берет текстовую строку и превращает её обратно в настоящий объект или массив JavaScript, с которым можно работать.
+
+//3. || [] (Оператор «ИЛИ»)Это критически важная страховка.Когда пользователь заходит на сайт в самый первый раз, в его браузере еще нет никакой «коробки» 'myCart'.В этом случае localStorage.getItem вернет пустоту (null).JSON.parse(null) не создаст массив.
+
+const CART_KEY = "myCart"; // - это ключ
+let shopping = JSON.parse(localStorage.getItem(CART_KEY)) || [];
+
+//*************C.ФУНКЦИИ. ОСНОВНАЯ ЛОГИКА*************/
+// 1.Очистка контейнера внутри
+function clearContainerContent() {
+  productContainer.innerHTML = "";
+}
+// 2. Форматирование текста с красивым пробелом ("14 500")
+function formattedPrice(formatted) {
+  return formatted.toLocaleString("ru-RU");
+}
+// 3. Функция для сохранения после обновления страницы (LocalStorage).(Воспринимает читаемость только строк)
+function saveToLocalStorage() {
+  localStorage.setItem(CART_KEY, JSON.stringify(shopping));
+}
+// 4. Функция для отрисовки внутрянки корзины(после клика и падения в нее). Настраивает заголовок и видимость кнопок навигации (назад/очистить все, которые скрыты).
+function switchToPage(page) {
+  if (page === "card") {
+    mainTitle.textContent = "Корзина"; // Меняем текст (удаляется кнопка)
+    mainTitle.prepend(backBtn); // Возвращаем стрелку в начало h1 (приклеиваем ее обратно)
+    backBtn.classList.remove("hidden"); // Показываем её
+    mainTitle.prepend(deleteCart); // Возвращаем корзину в начало h1 (приклеиваем ее обратно)
+    deleteCart.classList.remove("hidden");
+  } else {
+    mainTitle.innerText = "Витрина товаров";
+    backBtn.classList.add("hidden"); // Скрываем стрелку
+    renderProducts(products); // Рисуем витрину заново
+  }
+}
+// 5.Основная логика отрисовки карточек товара и поисковой строки.
+// isCart по умолчанию false
+function renderProducts(productsArray) {
+  //Очистка,чтобы товары не дублировались
+  clearContainerContent();
+
+  /* Поисковая Строка*/
+  //Поисковая строка без совпадений(логика)
   if (productsArray.length === 0) {
     productContainer.innerHTML = `<div class='no-products'>
             <p>К сожалению, товары не найдены 🔍</p>
-            <button id='clear-search-btn' class='clear-search-btn'>Сбросить поиск</button>
+            <button id="clear-search-btn" class="clear-search-btn">Сбросить поиск</button>
         </div>`;
 
     document
@@ -51,38 +87,97 @@ function renderProducts(productsArray) {
         searchInput.focus(); // 3. Вернули курсор в поле (удобно!)
       });
 
-    return; // Производительность (return): Функция сразу прекращает работу, не пытаясь перебирать массив (хоть он и пустой).
+    return; // Производительность (return): Прекращение, без перебора пустого массива
   }
 
-  //**4. ОТРИСОВКА КАРТОЧЕК ТОВАРА */
-
+  /* ОТРИСОВКА КАРТОЧЕК ТОВАРА */
   //.forEach()- перебор всех элементов массива и выполнение функции для каждого
   productsArray.forEach((item) => {
-    //форматирую item.price в productsArray
+    //Форматирую item.price в productsArray
     const formattedProducts = formattedPrice(item.price);
 
     const cardHtml = `<div class = "card">
   <h3>${item.name}</h3>
- <img src="${item.img}" alt="${item.name}" ">
+  <img src="${item.img}" alt="${item.name}" ">
   <p>Цена: ${formattedProducts} руб.</p>
   <button class="buy-btn" data-id="${item.id}">Купить</button>
   </div>`;
+
     //.insertAdjacentHTML() — это метод, который позволяет «вклеить» кусок HTML-кода (строку) в определенное место на странице.
     productContainer.insertAdjacentHTML("beforeend", cardHtml);
   });
-
-  // const totalPriceShopping = shopping.reduce((acc, item) => {
-  //   return acc + item.price * item.count;
-  // }, 0);
-
-  // // 3. ОТРИСОВКА ИТОГА: Рисуем финальный блок (ВНЕ цикла, один раз)
-  // const totalPriceShoppingHtml = `<div class="total-price">
-  // <hr>
-  // <h3>Итог по оплате: ${totalPriceShopping}</h3>
-  // </div>`;
-  // productContainer.insertAdjacentHTML("beforeend", totalPriceShoppingHtml);
 }
 renderProducts(products);
+
+// 6.Поведение Корзины (сначала проверка на пустоту корзины, а потом на товары внутри)
+// Заглушка - если функцию вызываем пустой arrayToRender = shopping, но если вызываем так shoppingСartContent(filterShopping), то arrayToRender = filterShopping
+function shoppingСartContent(arrayToRender = shopping) {
+  clearContainerContent();
+  //Проверка на пустоту корзины и сброс на первоначальный экран с помощью отрисовки и вызова функции renderProducts(products);
+  //Блок пустой корзины
+  if (shopping.length === 0) {
+    productContainer.innerHTML = `<div class='no-products'>
+            <p>Добавьте товары в корзину</p>
+            <button id='go-to-shop-btn' class="go-to-shop-btn">В магазин</button>
+        </div>`;
+
+    document.getElementById("go-to-shop-btn").addEventListener("click", () => {
+      mainTitle.textContent = "Витрина товаров";
+      renderProducts(products); // Возвращаемся на главную
+    });
+    return; // Выходим из функции
+  }
+  //Блок НЕ пустой корзины arrayToRender (ТАК КАК ПЕРВЫЙ IF ПРОСКОЧИЛ, ЗНАЧИТ В НЕМ ЧТО ТО ЕСТЬ И УЖЕ ПРОВЕРЯЕМ arrayToRender.length - который является массивом после совпадений в поле ввода input).  Мы проверяем arrayToRender.length. Если там 0 — значит, виноват именно поиск.
+  //   Вопрос: Почему же тогда arrayToRender (то, что мы пытаемся показать) равен 0?
+  // Ответ: Единственная причина — это «сито» (фильтр поиска). Товары в коробке есть, но они «застряли» в фильтре, потому что не подошли под запрос пользователя.
+  // Простой пример и
+
+  if (shopping.length > 0 && arrayToRender.length === 0) {
+    productContainer.innerHTML = `<div class='no-products'>
+            <p>Ничего не найдено</p>
+            <button id='reset-search-btn' class="reset-search-btn">Сбросить поиск</button>
+        </div>`;
+
+    document
+      .getElementById("reset-search-btn")
+      .addEventListener("click", () => {
+        searchInput.value = ""; // Очищаем поле поиска
+        shoppingСartContent(shopping); // Показываем содержимое корзины заново
+      });
+    return; // Выходим из функции
+  }
+
+  //.forEach()- перебор всех элементов массива и выполнение функции для каждого
+  arrayToRender.forEach((item) => {
+    //форматирую item.price в shopping
+    const formattedShopping = formattedPrice(item.price);
+
+    const cardShop = `<div class = "card">
+   <h3>${item.name}</h3>
+  <img src="${item.img}" alt="${item.name}" ">
+   <p>Цена: ${formattedShopping} руб.</p>
+   <p>Количество: ${item.count} шт.</p>
+   </div>`;
+    productContainer.insertAdjacentHTML("beforeend", cardShop);
+  });
+
+  //Считаем ОБЩУЮ сумму всех товаров()
+  // reduce — проходит по всему списку товаров и «схлопывает» его в одно число.
+  const totalPriceShopping = shopping.reduce((acc, item) => {
+    return acc + item.price * item.count;
+  }, 0);
+
+  //ОТРИСОВКА ИТОГовой суммы: Рисуем финальный блок (ВНЕ цикла и делаем стиль для линии class="total-price-shopping" )
+  const formattedtotalPriceShopping = formattedPrice(totalPriceShopping);
+  const totalPriceShoppingHtml = `<div class="total-price-shopping">
+  <h3>Итог по оплате: ${formattedtotalPriceShopping} руб.</h3>
+  </div>`;
+  productContainer.insertAdjacentHTML("beforeend", totalPriceShoppingHtml);
+}
+
+//*************D.ОБРАБОТЧИКИ СОБЫТИЙ*************/
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////ДЕЛАЮ ПРАВИЛЬНУЮ СТРУКТУРУКОДА//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //**5. ИЗМЕНЕНИЕ КНОПКИ КУПИТЬ, ПРИ КЛИКЕ*/
 productContainer.addEventListener("click", (ev) => {
@@ -135,30 +230,27 @@ productContainer.addEventListener("click", (ev) => {
 searchInput.addEventListener("input", (ev) => {
   //.trim() убирает лишние пробелы в начале и в конце строки. Так поиск не будет пытаться искать товары, состоящие из одних пробелов.
   const searchTextLow = ev.target.value.toLowerCase().trim();
-  //Cоздаю новый массив filterProducts(метод filter так работает), содержащие подстроку из searchTextLow
-  const filterProducts = products.filter((item) => {
-    return item.name.toLowerCase().includes(searchTextLow);
-  });
+  //Проверка заголовка и определения в каком Блоке мы будем искать товары в Витрине или Корзине
+  //Витрина
 
-  renderProducts(filterProducts);
+  //Cоздаю новый массив filterProducts(метод filter так работает), содержащие подстроку из searchTextLow
+  if (mainTitle.textContent.includes("Витрина")) {
+    const filterProducts = products.filter((item) => {
+      return item.name.toLowerCase().includes(searchTextLow);
+    });
+    renderProducts(filterProducts);
+  } else if (mainTitle.textContent.includes("Корзина")) {
+    const filterShopping = shopping.filter((item) => {
+      return item.name.toLowerCase().includes(searchTextLow);
+    });
+    shoppingСartContent(filterShopping);
+  }
+
+  //Корзина
 
   /*!!!! КЛАССНАЯ ИНФА МОГУ ЗАБЫТЬ пустой .includes("") - true - как будто совпадения есть со всеми карточками, его особенность, так как пустота «есть» в любом тексте
   "Биокамин".includes("Био") — true (совпадение есть)."Биокамин".includes("") — true (пустота «есть» в любом тексте).*/
 });
-
-function switchToPage(page) {
-  if (page === "card") {
-    mainTitle.textContent = "Корзина"; // Меняем текст (удаляется кнопка)
-    mainTitle.prepend(backBtn); // Возвращаем стрелку в начало h1 (приклеиваем ее обратно)
-    backBtn.classList.remove("hidden"); // Показываем её
-    mainTitle.prepend(deleteCart); // Возвращаем корзину в начало h1 (приклеиваем ее обратно)
-    deleteCart.classList.remove("hidden");
-  } else {
-    mainTitle.innerText = "Витрина товаров";
-    backBtn.classList.add("hidden"); // Скрываем стрелку
-    renderProducts(products); // Рисуем витрину заново
-  }
-}
 
 backBtn.addEventListener("click", () => {
   switchToPage("vitrinaVNachalo"); // Возвращаемся на витрину
@@ -170,18 +262,19 @@ deleteCart.addEventListener("click", (ev) => {
   if (deleteAll) {
     console.log("Очистка");
     shopping.length = 0;
-    productContainer.innerHTML = "";
+    clearContainerContent();
     cartCount.textContent = 0;
     localStorage.removeItem(CART_KEY);
 
     if (shopping.length === 0) {
-      productContainer.innerHTML = `<div class='no-products'>
+      productContainer.innerHTML = `<div class="no-products">
             <p>Корзина Очищена</p>
-            <button id='clear-search-btn'>Вернуться на главную</button>
+            <button id="clear-search-btn" class="clear-search-btn">Вернуться на главную</button>
         </div>`;
 
       const zeroPriceHtml = `<div class="total-price-shopping">
-  <h3>Итог по оплате: 0 руб.</h3>
+  <h3>
+  Итог по оплате: 0 руб.</h3>
   </div>`;
       productContainer.insertAdjacentHTML("beforeend", zeroPriceHtml);
 
@@ -189,14 +282,14 @@ deleteCart.addEventListener("click", (ev) => {
         .getElementById("clear-search-btn")
         .addEventListener("click", (ev) => {
           if (shopping.length === 0) {
-            productContainer.innerHTML = "";
+            clearContainerContent();
             mainTitle.textContent = "Витрина товаров после обновления";
             renderProducts(products);
             // window.location.reload(); -- костыльный способ вернуться на начальный экран путем перезагрузки страницы(работает дольше- чем код выше) _______
           }
         });
 
-      return; // Производительность (return): Функция сразу прекращает работу, не пытаясь перебирать массив (хоть он и пустой).
+      return; // Производительность (return): Прекращение, без перебора пустого массива
     }
   } else {
     console.log("Отмена очистки");
@@ -205,23 +298,7 @@ deleteCart.addEventListener("click", (ev) => {
 
 // ***************************************************************************************************************************************************************************************
 
-//Корзина
-// Учить НИЖе
-// 1. Важно: В LocalStorage всё хранится только в виде текста (строки). Если там лежит твой массив, то для браузера это просто длинный набор символов: '[{"id":1,"name":"Apple"}]'.
-
-// 2.JSON.parse — это «переводчик». Он берет текстовую строку и превращает её обратно в настоящий объект или массив JavaScript, с которым можно работать.
-
-//3. || [] (Оператор «ИЛИ»)Это критически важная страховка.Когда пользователь заходит на сайт в самый первый раз, в его браузере еще нет никакой «коробки» 'myCart'.В этом случае localStorage.getItem вернет пустоту (null).JSON.parse(null) не создаст массив.
-
-// Теперь, если ты захочешь переименовать «коробку», ты меняешь только значение в const CART_KEY = "новое_имя". Весь остальной код подхватит его автоматически. Это и есть та самая «легкость правок».
-const CART_KEY = "myCart";
-let shopping = JSON.parse(localStorage.getItem(CART_KEY)) || [];
-
 //LocalStorage — это очень простое хранилище, оно понимает только текст (строки). Если ты попытаешься «засунуть» туда массив напрямую, вот что произойдет:
-
-function saveToLocalStorage() {
-  localStorage.setItem(CART_KEY, JSON.stringify(shopping));
-}
 
 //Выносим отдельно в фунцию логику поведения корзины(щас работает только при событии клика на нее, а мы делаем отдельно)
 
@@ -234,53 +311,6 @@ shoppingСart.addEventListener("click", (ev) => {
 ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////
-function shoppingСartContent() {
-  productContainer.innerHTML = "";
-
-  if (shopping.length === 0) {
-    productContainer.innerHTML = `<div class='no-products'>
-            <p>Добавьте товары в корзину</p>
-            <button id='clear-search-btn'>Сбросить поиск</button>
-        </div>`;
-    document
-      .getElementById("clear-search-btn")
-      .addEventListener("click", (ev) => {
-        //__________
-        if (shopping.length === 0) {
-          productContainer.innerHTML = "";
-          mainTitle.textContent = "Витрина товаров после обновления";
-          renderProducts(products);
-          // window.location.reload(); -- костыльный способ вернуться на начальный экран путем перезагрузки страницы(работает дольше- чем код выше) _______
-        }
-      });
-
-    return; // Производительность (return): Функция сразу прекращает работу, не пытаясь перебирать массив (хоть он и пустой).
-  }
-
-  shopping.forEach((item) => {
-    //форматирую item.price в shopping
-    const formattedShopping = formattedPrice(item.price);
-
-    const cardShop = `<div class = "card">
-   <h3>${item.name}</h3>
-  <img src="${item.img}" alt="${item.name}" ">
-   <p>Цена: ${formattedShopping} руб.</p>
-   <p>Количество: ${item.count} шт.</p>
-   </div>`;
-    productContainer.insertAdjacentHTML("beforeend", cardShop);
-  });
-
-  const totalPriceShopping = shopping.reduce((acc, item) => {
-    return acc + item.price * item.count;
-  }, 0);
-
-  // 3. ОТРИСОВКА ИТОГА: Рисуем финальный блок (ВНЕ цикла, один раз)
-  const formattedtotalPriceShopping = formattedPrice(totalPriceShopping);
-  const totalPriceShoppingHtml = `<div class="total-price-shopping">
-  <h3>Итог по оплате: ${formattedtotalPriceShopping} руб.</h3>
-  </div>`;
-  productContainer.insertAdjacentHTML("beforeend", totalPriceShoppingHtml);
-}
 
 // В САМОМ НИЗУ:
 // 1. Считаем сумму сразу при загрузке скрипта

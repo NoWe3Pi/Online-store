@@ -216,7 +216,10 @@ button.buy-btn.added {
   .ds-icon {
     margin-left: 10px;
   }
-  #clear-search-btn {
+
+  .clear-search-btn,
+  .reset-search-btn,
+  .go-to-shop-btn {
     width: auto !important;
     white-space: nowrap; /* Запрет Текста на ПЕРЕНОС */
     padding: 10px 5px !important; /*Внутренние отступы (высота и ширина) */
@@ -224,7 +227,9 @@ button.buy-btn.added {
   }
 }
 
-#clear-search-btn {
+.clear-search-btn,
+.reset-search-btn,
+.go-to-shop-btn {
   align-items: center;
   background: white;
   border: 2px solid rgb(255, 82, 82); /* Тот самый желтый цвет */
@@ -232,4 +237,16 @@ button.buy-btn.added {
   padding: 8px 15px;
   width: 18%;
   cursor: pointer;
+}
+
+#main-title .main-logo {
+  height: 100px; /* Попробуйте менять это значение, чтобы подобрать размер */
+  width: auto; /* Сохраняем пропорции собаки */
+
+  /* 2. Выравниваем по вертикали относительно строки поиска */
+  vertical-align: middle;
+
+  /* 4. Убираем отрицательные маржи, если вы их добавляли ранее */
+  margin-top: 0;
+  margin-bottom: 0;
 }
